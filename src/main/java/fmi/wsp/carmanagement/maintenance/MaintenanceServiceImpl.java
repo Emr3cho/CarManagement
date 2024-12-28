@@ -1,10 +1,9 @@
-package fmi.wsp.carmanagement.maintenance.domain;
+package fmi.wsp.carmanagement.maintenance;
 
 import fmi.wsp.carmanagement.maintenance.DTO.MaintenanceReportRequest;
 import fmi.wsp.carmanagement.maintenance.DTO.MaintenanceReportResponse;
 import fmi.wsp.carmanagement.maintenance.DTO.MaintenanceRequest;
 import fmi.wsp.carmanagement.maintenance.DTO.MaintenanceResponse;
-import fmi.wsp.carmanagement.maintenance.MaintenanceService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

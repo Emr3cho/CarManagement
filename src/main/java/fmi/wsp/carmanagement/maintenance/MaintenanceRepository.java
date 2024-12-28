@@ -1,4 +1,4 @@
-package fmi.wsp.carmanagement.maintenance.domain;
+package fmi.wsp.carmanagement.maintenance;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
