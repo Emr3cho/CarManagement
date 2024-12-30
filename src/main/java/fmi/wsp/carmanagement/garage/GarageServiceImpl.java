@@ -5,12 +5,19 @@ import fmi.wsp.carmanagement.common.GarageMapper;
 import fmi.wsp.carmanagement.common.ResourceNotFoundException;
 import fmi.wsp.carmanagement.garage.DTO.GarageRequest;
 import fmi.wsp.carmanagement.garage.DTO.GarageResponse;
+import fmi.wsp.carmanagement.garage.DTO.GarageReportResponse;
 import fmi.wsp.carmanagement.maintenance.MaintenanceEntity;
+import fmi.wsp.carmanagement.maintenance.MaintenanceRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -19,6 +26,7 @@ class GarageServiceImpl implements GarageService {
 
     private final GarageRepository garageRepository;
     private final GarageMapper garageMapper;
+    private final MaintenanceRepository maintenanceRepository;
 
     @Override
     public GarageResponse fetchGarage(long garageId) {
@@ -31,8 +39,14 @@ class GarageServiceImpl implements GarageService {
     }
 
     @Override
-    public List<GarageResponse> fetchAllGarages() {
-        return garageRepository.findAll().stream().map(garageMapper::toGarageResponse).collect(Collectors.toList());
+    public List<GarageResponse> fetchAllGarages(String city) {
+        List<GarageEntity> garages;
+        if (city == null) {
+            garages = garageRepository.findAll();
+        }else {
+            garages = garageRepository.findAllByNameStartingWithIgnoreCase(city);
+        }
+        return garages.stream().map(garageMapper::toGarageResponse).collect(Collectors.toList());
     }
 
     @Override
@@ -66,6 +80,29 @@ class GarageServiceImpl implements GarageService {
         }
 
         garageRepository.delete(entityToDelete);
+    }
+
+    public List<GarageReportResponse> getCapacityReport(Long garageId, LocalDate startDate, LocalDate endDate) {
+        GarageEntity garage = garageRepository.findById(garageId)
+                .orElseThrow(() -> new IllegalArgumentException("Garage not found"));
+
+        List<Object[]> maintenanceData = maintenanceRepository.findMaintenanceRequestsByDate(garageId, startDate, endDate);
+
+        Map<String, Long> maintenanceMap = maintenanceData.stream()
+                .collect(Collectors.toMap(
+                        row -> row[0].toString(),
+                        row -> (Long) row[1]
+                ));
+
+        List<GarageReportResponse> report = new ArrayList<>();
+        for (LocalDate date = startDate; !date.isAfter(endDate); date = date.plusDays(1)) {
+            long requests = maintenanceMap.getOrDefault(date.toString(), 0L);
+            long availableCapacity = garage.getCapacity() - requests;
+
+            report.add(new GarageReportResponse(date, requests, availableCapacity));
+        }
+
+        return report;
     }
 
 }

@@ -18,10 +18,7 @@ spring:
     defer-datasource-initialization: true
   sql:
     init:
-      mode: always
-  modulith:
-    events:
-      republish-outstanding-events-on-restart: true
+      mode: never
 
 server:
   port: 8088

@@ -1,5 +1,8 @@
 package fmi.wsp.carmanagement.maintenance.DTO;
 
-public record MaintenanceReportResponse() {
+import lombok.Builder;
+
+@Builder
+public record MaintenanceReportResponse(String yearMonth, long requests) {
 
 }

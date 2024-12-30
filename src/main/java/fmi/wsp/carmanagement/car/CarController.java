@@ -53,5 +53,4 @@ public class CarController {
         carService.deleteCar(id);
         return ResponseEntity.status(200).build();
     }
-
 }

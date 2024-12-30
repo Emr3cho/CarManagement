@@ -7,4 +7,5 @@ import java.util.List;
 
 public interface GarageRepository extends JpaRepository<GarageEntity, Long> {
     List<GarageEntity> findAllByIdIn(Collection<Long> id);
+    List<GarageEntity> findAllByNameStartingWithIgnoreCase(String city);
 }

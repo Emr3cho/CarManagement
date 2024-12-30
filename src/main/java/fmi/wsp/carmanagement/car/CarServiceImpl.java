@@ -32,7 +32,7 @@ public class CarServiceImpl implements CarService {
     @Override
     public CarResponse updateCar(long carId, CarUpdateRequest request) {
         CarEntity carToUpdate = carRepository.findById(carId).get();
-        if (!request.garageIds().isEmpty()) {
+        if (request.garageIds() != null && !request.garageIds().isEmpty()) {
             List<GarageEntity> newGarages = garageService.findSpecificGarages(request.garageIds());
 
             for (GarageEntity oldGarage : carToUpdate.getGarages()) {
